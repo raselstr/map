@@ -10,14 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os, random, string, inspect
+import os, random, string
 from pathlib import Path
 from dotenv import load_dotenv
-<<<<<<< HEAD
-from str2bool import str2bool
-=======
 import dj_database_url 
->>>>>>> ff692ef (ok, first)
 
 load_dotenv()  # take environment variables from .env.
 
@@ -32,16 +28,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     SECRET_KEY = ''.join(random.choice( string.ascii_lowercase  ) for i in range( 32 ))
 
-# Enable/Disable DEBUG Mode
-DEBUG = str2bool(os.environ.get('DEBUG'))
-#print(' DEBUG -> ' + str(DEBUG) ) 
+# Render Deployment Code
+DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['*']
-
-# Add here your deployment HOSTS
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://localhost:5085', 'http://127.0.0.1:8000', 'http://127.0.0.1:5085']
-
-X_FRAME_OPTIONS = "SAMEORIGIN"
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -70,16 +60,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-HOME_TEMPLATES = os.path.join(BASE_DIR, 'templates')
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-<<<<<<< HEAD
-        "DIRS": [HOME_TEMPLATES],
-=======
         "DIRS": [BASE_DIR / "templates"],
->>>>>>> ff692ef (ok, first)
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
