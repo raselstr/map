@@ -1,0 +1,60 @@
+{% extends "pages/sample-page.html" %}
+{% load django_tables2 %}
+
+{% block content %}
+<div class="pc-container">
+  <div class="pc-content">
+    <div class="page-header">
+      <div class="page-block">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <div class="page-header-title">
+              <h5 class="m-b-10">{{ title }}</h5>
+            </div>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+            </ul>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <a class="btn btn-primary" href="{{ url_action }}add/">
+              <i class="fas fa-plus me-2"></i>Tambah Data
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-lg-6">
+        <form method="get" class="d-flex gap-2">
+          <input type="text" name="search" class="form-control" placeholder="Cari data..." value="{{ search_query }}">
+          <button type="submit" class="btn btn-outline-secondary">Cari</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white border-0 py-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="mb-0">Daftar {{ title }}</h5>
+                <small class="text-muted">Kelola data dengan cepat dan terstruktur.</small>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            {% if table %}
+              {% render_table table %}
+            {% else %}
+              <div class="alert alert-info mb-0">Belum ada data.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

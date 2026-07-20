@@ -1,7 +1,7 @@
 import os
 
 from django import forms
-from django.config.files.uploadedfile import UploadedFile
+from django.core.files.uploadedfile import UploadedFile
 from django.db import models
 
 from config.utils.image_compression import compress_if_image, is_uploaded_image
