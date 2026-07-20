@@ -34,7 +34,6 @@ class BaseCRUDView(ExcelMixin, ListView):
     # =========================
     def get_permission(self):
         from menus.models import RolePermission, SubMenu
-        from profiles.models import UserProfile
 
         user = self.request.user
 
@@ -49,9 +48,8 @@ class BaseCRUDView(ExcelMixin, ListView):
                 can_delete=True
             )
 
-        try:
-            profile = UserProfile.objects.get(user=user)
-        except UserProfile.DoesNotExist:
+        profile = getattr(user, "userprofile", None)
+        if not profile or not getattr(profile, "role_id", None):
             return None
 
         try:

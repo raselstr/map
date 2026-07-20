@@ -7,7 +7,7 @@ class OPDTable(BaseTable):
 
     class Meta(BaseTable.Meta):
         model = OPD
-        fields = ("kode", "nama", "aksi")
+        fields = ("no", "kode", "nama", "aksi")
         order_by = ("kode",)
 
 
@@ -16,5 +16,5 @@ class SubOPDTable(BaseTable):
 
     class Meta(BaseTable.Meta):
         model = SubOPD
-        fields = ("kode", "nama", "opd", "aksi")
+        fields = ("no", "kode", "nama", "opd", "aksi")
         order_by = ("kode",)

@@ -47,7 +47,15 @@ def render_numbered_list(queryset, attr_name):
     )
 
 class BaseTable(tables.Table):
-    no = tables.Column(empty_values=(), verbose_name="No", orderable=False)
+    no = tables.Column(
+        empty_values=(),
+        verbose_name="No",
+        orderable=False,
+        attrs={
+            "th": {"class": "text-start", "style": "width: 56px;"},
+            "td": {"class": "text-start"},
+        },
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

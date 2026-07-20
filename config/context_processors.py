@@ -29,6 +29,9 @@ SPJ_ACTIVE_SUBMENU_MAP = {
 def _active_submenu_name(request):
     resolver_match = getattr(request, "resolver_match", None)
     url_name = getattr(resolver_match, "url_name", "") or ""
+    for suffix in ("_add", "_update", "_delete"):
+        if url_name.endswith(suffix):
+            return f"{url_name[:-len(suffix)]}_list"
     return SPJ_ACTIVE_SUBMENU_MAP.get(url_name, url_name)
 
 def menu_context(request):
@@ -42,13 +45,17 @@ def menu_context(request):
     # SUPERUSER (LIHAT SEMUA MENU)
     # ==============================
     if user.is_superuser:
-        menus = Menu.objects.prefetch_related('submenus').all()
+        menus = Menu.objects.filter(aktif=True).prefetch_related('submenus').all()
 
         menu_data = []
         for menu in menus:
+            submenus = menu.submenus.filter(aktif=True)
+            if not submenus.exists():
+                continue
+
             menu_data.append({
                 'menu': menu,
-                'submenus': menu.submenus.all()
+                'submenus': submenus
             })
 
         return {
@@ -61,13 +68,15 @@ def menu_context(request):
     # ==============================
     try:
         role = user.userprofile.role
-    except:
+    except Exception:
         return {}
 
     # Ambil permission sesuai role
     permissions = RolePermission.objects.filter(
         role=role,
-        can_view=True
+        can_view=True,
+        submenu__aktif=True,
+        submenu__menu__aktif=True,
     ).select_related('submenu__menu').order_by(
         'submenu__menu__urutan',
         'submenu__urutan'

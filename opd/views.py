@@ -26,18 +26,6 @@ class OPDListView(BaseCRUDView):
         return context
 
 
-class OPDCreateView(OPDListView):
-    pass
-
-
-class OPDUpdateView(OPDListView):
-    pass
-
-
-class OPDDeleteView(OPDListView):
-    pass
-
-
 class SubOPDListView(BaseCRUDView):
     model = SubOPD
     form_class = SubOPDForm
@@ -57,15 +45,3 @@ class SubOPDListView(BaseCRUDView):
         context["export_url"] = self.get_export_url()
         context["import_url"] = self.get_import_url()
         return context
-
-
-class SubOPDCreateView(SubOPDListView):
-    pass
-
-
-class SubOPDUpdateView(SubOPDListView):
-    pass
-
-
-class SubOPDDeleteView(SubOPDListView):
-    pass

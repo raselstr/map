@@ -1,9 +1,8 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import redirect, render
 
-# Create your views here.
 
 def index(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect("admin:index")
 
-    # Page from the theme 
-    return render(request, 'pages/index.html')
+    return render(request, "pages/index.html")

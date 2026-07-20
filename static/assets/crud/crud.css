@@ -3,6 +3,10 @@
   --crud-muted: #667085;
 }
 
+.crud-page .page-header {
+  margin-bottom: 18px;
+}
+
 .crud-actions {
   display: flex;
   justify-content: flex-end;
@@ -22,6 +26,8 @@
 .crud-card {
   border: 1px solid var(--crud-border);
   box-shadow: 0 8px 22px rgba(16, 24, 40, 0.04);
+  margin-top: 12px;
+  margin-bottom: 18px;
 }
 
 .crud-toolbar {
