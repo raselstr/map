@@ -16,8 +16,11 @@
               <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
             </ul>
           </div>
-          <div class="col-md-4 text-md-end">
-            <a class="btn btn-primary" href="{{ url_action }}add/">
+          <div class="col-md-4 text-md-end d-flex justify-content-end gap-2">
+            <a class="btn btn-outline-success" href="{{ export_url }}">
+              <i class="fas fa-file-excel me-2"></i>Export Excel
+            </a>
+            <a class="btn btn-primary" href="{{ url_action }}add/" data-bs-toggle="modal" data-bs-target="#crudModal">
               <i class="fas fa-plus me-2"></i>Tambah Data
             </a>
           </div>
@@ -33,6 +36,10 @@
         </form>
       </div>
     </div>
+
+    {% if show_modal %}
+      {% include "opd/modal_form.html" %}
+    {% endif %}
 
     <div class="row">
       <div class="col-sm-12">

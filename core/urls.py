@@ -20,5 +20,6 @@ urlpatterns = [
     path('', include('home.urls')),
     path("admin/", admin.site.urls),
     path("", include('admin_berry.urls')),
+    path("", include('config.urls')),
     path("", include('opd.urls')),
 ]

@@ -1,16 +1,9 @@
-import django_tables2 as tables
-
-from config.tables import BaseTable
+from config.tables import BaseTable, action_column
 from .models import OPD, SubOPD
 
 
 class OPDTable(BaseTable):
-    aksi = tables.TemplateColumn(
-        template_name="opd/actions.html",
-        extra_context={"update_url_name": "opd_update", "delete_url_name": "opd_delete"},
-        orderable=False,
-        verbose_name="Aksi",
-    )
+    aksi = action_column("opd_update", "opd_delete")
 
     class Meta(BaseTable.Meta):
         model = OPD
@@ -19,12 +12,7 @@ class OPDTable(BaseTable):
 
 
 class SubOPDTable(BaseTable):
-    aksi = tables.TemplateColumn(
-        template_name="opd/actions.html",
-        extra_context={"update_url_name": "subopd_update", "delete_url_name": "subopd_delete"},
-        orderable=False,
-        verbose_name="Aksi",
-    )
+    aksi = action_column("subopd_update", "subopd_delete")
 
     class Meta(BaseTable.Meta):
         model = SubOPD

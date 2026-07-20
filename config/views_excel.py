@@ -245,24 +245,41 @@ class ExcelMixin:
         context['import_url'] = self.get_import_url()
         return context
     
+    def get_export_url_kwargs(self):
+        """Return kwargs yang dibutuhkan oleh URL export generic."""
+        if not getattr(self, 'model', None):
+            return {}
+        return {
+            'app_label': self.model._meta.app_label,
+            'model_name': self.model._meta.model_name,
+        }
+
+    def get_import_url_kwargs(self):
+        """Return kwargs yang dibutuhkan oleh URL import generic."""
+        return self.get_export_url_kwargs()
+
     def get_export_url(self):
         """Override untuk set custom export URL"""
         if hasattr(self, 'url_export') and self.url_export:
             from django.urls import reverse
+            kwargs = self.get_export_url_kwargs()
+            if kwargs:
+                return reverse(self.url_export, kwargs=kwargs)
             return reverse(self.url_export)
-        # Fallback to generic URL
+
         from django.urls import reverse
-        app_label = self.model._meta.app_label
-        model_name = self.model._meta.model_name
-        return reverse('config:generic_excel_export', kwargs={'app_label': app_label, 'model_name': model_name})
-    
+        kwargs = self.get_export_url_kwargs()
+        return reverse('config:generic_excel_export', kwargs=kwargs)
+
     def get_import_url(self):
         """Override untuk set custom import URL"""
         if hasattr(self, 'url_import') and self.url_import:
             from django.urls import reverse
+            kwargs = self.get_import_url_kwargs()
+            if kwargs:
+                return reverse(self.url_import, kwargs=kwargs)
             return reverse(self.url_import)
-        # Fallback to generic URL
+
         from django.urls import reverse
-        app_label = self.model._meta.app_label
-        model_name = self.model._meta.model_name
-        return reverse('config:generic_excel_import', kwargs={'app_label': app_label, 'model_name': model_name})
+        kwargs = self.get_import_url_kwargs()
+        return reverse('config:generic_excel_import', kwargs=kwargs)

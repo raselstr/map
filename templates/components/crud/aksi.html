@@ -1,0 +1,26 @@
+<div class="crud-row-actions">
+  <button
+    type="button"
+    class="btn btn-icon btn-sm btn-light-primary"
+    title="Edit"
+    data-crud-modal-title="Edit Data"
+    hx-get="{% url update_url_name record.pk %}"
+    hx-target="#crud-modal-body"
+    hx-swap="innerHTML"
+    data-bs-toggle="modal"
+    data-bs-target="#crudModal">
+    <i class="ti ti-edit"></i>
+  </button>
+  <button
+    type="button"
+    class="btn btn-icon btn-sm btn-light-danger"
+    title="Hapus"
+    data-crud-modal-title="Hapus Data"
+    hx-get="{% url delete_url_name record.pk %}"
+    hx-target="#crud-modal-body"
+    hx-swap="innerHTML"
+    data-bs-toggle="modal"
+    data-bs-target="#crudModal">
+    <i class="ti ti-trash"></i>
+  </button>
+</div>

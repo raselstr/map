@@ -16,7 +16,7 @@ class BaseCRUDView(ExcelMixin, ListView):
     model = None
     form_class = None
     table_class = None
-    template_name = "pages/page.html"
+    template_name = "components/crud/list.html"
     template_list = "components/crud/list.html"
     template_form = "components/crud/form_general.html"
 
@@ -363,6 +363,8 @@ class BaseCRUDView(ExcelMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
+        path_parts = [part for part in request.path.strip("/").split("/") if part]
+        url_name = getattr(getattr(request, "resolver_match", None), "url_name", "") or ""
 
         if pk and "delete" in request.path:
             return self.delete_view(request, pk)
@@ -370,7 +372,7 @@ class BaseCRUDView(ExcelMixin, ListView):
         if pk and "form" in request.path:
             return self.form_view(request, pk)
 
-        if "form" in request.path:
+        if "form" in path_parts or url_name.endswith("_add") or (path_parts and path_parts[-1] == "add"):
             return self.form_view(request)
 
         return super().dispatch(request, *args, **kwargs)
@@ -421,6 +423,9 @@ class BaseCRUDView(ExcelMixin, ListView):
             "form": form,
             "title": self.title,
             "permission": perm,
+            "url_list": self.url_list,
+            "form_action": request.path,
+            "submit_label": "Simpan Perubahan" if instance else "Simpan Data",
             "is_multipart_form": form.is_multipart(),
         }
 
@@ -459,7 +464,8 @@ class BaseCRUDView(ExcelMixin, ListView):
         return render(request, "components/crud/delete.html", {
             "object": obj,
             "url_list": self.url_list,
-            "title": "Hapus Data"
+            "title": "Hapus Data",
+            "delete_action": request.path,
         })
 
 class BaseMasterDetailCRUDView(BaseCRUDView):

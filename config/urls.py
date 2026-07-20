@@ -1,7 +1,7 @@
 from django.urls import path
 from .views_excel import GenericExcelExportView, GenericExcelImportView
 
-app_name = 'core'
+app_name = 'config'
 
 urlpatterns = [
     # Generic Excel export/import

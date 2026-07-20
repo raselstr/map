@@ -3,16 +3,15 @@ from django.utils.html import format_html
 from config.utils.formatting import format_indonesian_number, is_money_identifier
 
 
-def action_column(url_pk, url_delete):
+def action_column(update_url_name, delete_url_name):
     return tables.TemplateColumn(
         template_name="components/crud/aksi.html",
         extra_context={
-            "update_action": "update",
-            "delete_action": "delete",
-            "url_pk": url_pk,
-            "url_delete": url_delete,
+            "update_url_name": update_url_name,
+            "delete_url_name": delete_url_name,
         },
         orderable=False,
+        verbose_name="Aksi",
     )
 
 
