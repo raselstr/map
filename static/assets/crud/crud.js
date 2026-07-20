@@ -88,7 +88,8 @@
   }, true);
 
   document.addEventListener("click", function (event) {
-    if (event.target.id !== "crudConfirmSaveButton") {
+    var confirmButton = event.target.closest("#crudConfirmSaveButton");
+    if (!confirmButton) {
       return;
     }
 
@@ -102,8 +103,8 @@
       modal.hide();
     }
 
-    if (window.htmx && pendingForm.hasAttribute("hx-post")) {
-      htmx.trigger(pendingForm, "submit");
+    if (pendingForm.requestSubmit) {
+      pendingForm.requestSubmit();
     } else {
       pendingForm.submit();
     }

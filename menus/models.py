@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import NoReverseMatch, reverse
 
 
 class Role(models.Model):
@@ -32,7 +33,6 @@ class Menu(models.Model):
 class SubMenu(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="submenus")
     nama = models.CharField(max_length=100)
-    url = models.CharField(max_length=255)
     url_name = models.CharField(max_length=100, blank=True)
     icon = models.CharField(max_length=60, blank=True)
     urutan = models.PositiveIntegerField(default=0)
@@ -46,6 +46,15 @@ class SubMenu(models.Model):
 
     def __str__(self):
         return self.nama
+
+    def get_url(self):
+        if not self.url_name:
+            return "#"
+
+        try:
+            return reverse(self.url_name)
+        except NoReverseMatch:
+            return "#"
 
 
 class RolePermission(models.Model):

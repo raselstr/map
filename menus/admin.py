@@ -18,10 +18,10 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(SubMenu)
 class SubMenuAdmin(admin.ModelAdmin):
-    list_display = ("nama", "menu", "url", "url_name", "urutan", "aktif")
+    list_display = ("nama", "menu", "url_name", "icon", "urutan", "aktif")
     list_filter = ("menu", "aktif")
     list_editable = ("urutan", "aktif")
-    search_fields = ("nama", "url", "url_name")
+    search_fields = ("nama", "url_name", "icon")
 
 
 @admin.register(Role)

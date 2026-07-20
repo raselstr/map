@@ -12,7 +12,7 @@ class MenuForm(BaseAppModelForm):
 class SubMenuForm(BaseAppModelForm):
     class Meta:
         model = SubMenu
-        fields = ["menu", "nama", "url", "url_name", "icon", "urutan", "aktif"]
+        fields = ["menu", "nama", "url_name", "icon", "urutan", "aktif"]
 
 
 class RoleForm(BaseAppModelForm):

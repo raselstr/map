@@ -1,10 +1,13 @@
 from types import SimpleNamespace
 
+from django.contrib import messages
+from django.shortcuts import redirect
+
 from config.crud.base import BaseCRUDView
 
-from .forms import MenuForm, RoleForm, RolePermissionForm, SubMenuForm
+from .forms import MenuForm, RoleForm, SubMenuForm
 from .models import Menu, Role, RolePermission, SubMenu
-from .tables import MenuTable, RolePermissionTable, RoleTable, SubMenuTable
+from .tables import MenuTable, RoleTable, SubMenuTable
 
 
 class FullAccessCRUDView(BaseCRUDView):
@@ -50,9 +53,86 @@ class RoleListView(FullAccessCRUDView):
 
 class RolePermissionListView(FullAccessCRUDView):
     model = RolePermission
-    form_class = RolePermissionForm
-    table_class = RolePermissionTable
+    form_class = None
+    table_class = None
+    template_name = "menus/role_permission_list.html"
     title = "Hak Akses Menu"
     url_list = "/hak-akses-menu/"
     url_action = "/hak-akses-menu/"
     url_action_pk = "/hak-akses-menu/"
+
+    def _get_selected_role(self):
+        role_id = self.request.POST.get("role") or self.request.GET.get("role")
+        roles = Role.objects.all()
+
+        if role_id:
+            return roles.filter(pk=role_id).first()
+
+        return roles.first()
+
+    def _build_permission_groups(self, role):
+        existing_permissions = {
+            permission.submenu_id: permission
+            for permission in RolePermission.objects.filter(role=role)
+        }
+
+        groups = []
+        menus = Menu.objects.filter(aktif=True).prefetch_related("submenus")
+
+        for menu in menus:
+            submenu_items = []
+            for submenu in menu.submenus.filter(aktif=True):
+                permission = existing_permissions.get(submenu.pk)
+                if permission is None:
+                    permission = RolePermission(role=role, submenu=submenu)
+
+                submenu_items.append({
+                    "submenu": submenu,
+                    "permission": permission,
+                })
+
+            if submenu_items:
+                groups.append({
+                    "menu": menu,
+                    "submenus": submenu_items,
+                })
+
+        return groups
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseCRUDView, self).get_context_data(**kwargs)
+        selected_role = self._get_selected_role()
+
+        context.update({
+            "title": self.title,
+            "roles": Role.objects.all(),
+            "selected_role": selected_role,
+            "permission_groups": (
+                self._build_permission_groups(selected_role)
+                if selected_role else []
+            ),
+            "url_list": self.url_list,
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        selected_role = self._get_selected_role()
+        if not selected_role:
+            messages.error(request, "Role belum tersedia.")
+            return redirect(self.url_list)
+
+        submenus = SubMenu.objects.filter(aktif=True)
+        for submenu in submenus:
+            RolePermission.objects.update_or_create(
+                role=selected_role,
+                submenu=submenu,
+                defaults={
+                    "can_view": f"can_view_{submenu.pk}" in request.POST,
+                    "can_add": f"can_add_{submenu.pk}" in request.POST,
+                    "can_edit": f"can_edit_{submenu.pk}" in request.POST,
+                    "can_delete": f"can_delete_{submenu.pk}" in request.POST,
+                },
+            )
+
+        messages.success(request, "Hak akses menu berhasil disimpan.")
+        return redirect(f"{self.url_list}?role={selected_role.pk}")

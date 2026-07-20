@@ -28,7 +28,7 @@
               <label>{{ item.menu.nama }}</label>
               <i class="{{ item.menu.icon }}"></i>
             </li>
-            <li class="pc-item pc-hasmenu {% for submenu in item.submenus %}{% if active_submenu == submenu.url_name or request.path == submenu.url %}active pc-trigger{% endif %}{% endfor %}">
+            <li class="pc-item pc-hasmenu {% for submenu in item.submenus %}{% if active_submenu == submenu.url_name or request.path == submenu.resolved_url %}active pc-trigger{% endif %}{% endfor %}">
               <a href="#!" class="pc-link">
                 <span class="pc-micon"><i class="{{ item.menu.icon }}"></i></span>
                 <span class="pc-mtext">{{ item.menu.nama }}</span>
@@ -36,8 +36,8 @@
               </a>
               <ul class="pc-submenu">
                 {% for submenu in item.submenus %}
-                  <li class="pc-item {% if active_submenu == submenu.url_name or request.path == submenu.url %}active{% endif %}">
-                    <a class="pc-link" href="{{ submenu.url }}">
+                  <li class="pc-item {% if active_submenu == submenu.url_name or request.path == submenu.resolved_url %}active{% endif %}">
+                    <a class="pc-link" href="{{ submenu.resolved_url }}">
                       {% if submenu.icon %}
                         <span class="pc-micon"><i class="{{ submenu.icon }}"></i></span>
                       {% endif %}

@@ -52,8 +52,14 @@ class BaseCRUDView(ExcelMixin, ListView):
         if not profile or not getattr(profile, "role_id", None):
             return None
 
+        resolver_match = getattr(self.request, "resolver_match", None)
+        url_name = getattr(resolver_match, "url_name", "") or ""
+        for suffix in ("_add", "_update", "_delete"):
+            if url_name.endswith(suffix):
+                url_name = f"{url_name[:-len(suffix)]}_list"
+
         try:
-            submenu = SubMenu.objects.get(url=self.url_list)
+            submenu = SubMenu.objects.get(url_name=url_name)
         except SubMenu.DoesNotExist:
             return None
 

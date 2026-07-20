@@ -79,6 +79,30 @@
   width: 84px;
 }
 
+.crud-permission-role {
+  width: min(100%, 360px);
+}
+
+.crud-permission-accordion .accordion-item {
+  border-color: var(--crud-border);
+}
+
+.crud-permission-accordion .accordion-button {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.crud-permission-table {
+  font-size: 12px;
+}
+
+.crud-permission-table th {
+  background: #f8fafc;
+  color: #344054;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
 .crud-table .table {
   margin-bottom: 0;
   font-size: 12px;

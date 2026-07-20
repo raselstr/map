@@ -1,3 +1,5 @@
+from django.urls import NoReverseMatch, reverse
+
 from menus.models import RolePermission, Menu
 
 
@@ -34,6 +36,24 @@ def _active_submenu_name(request):
             return f"{url_name[:-len(suffix)]}_list"
     return SPJ_ACTIVE_SUBMENU_MAP.get(url_name, url_name)
 
+
+def _resolve_submenu_url(submenu):
+    if not submenu.url_name:
+        return "#"
+
+    try:
+        return reverse(submenu.url_name)
+    except NoReverseMatch:
+        return "#"
+
+
+def _prepare_submenus(submenus):
+    prepared = []
+    for submenu in submenus:
+        submenu.resolved_url = _resolve_submenu_url(submenu)
+        prepared.append(submenu)
+    return prepared
+
 def menu_context(request):
     # Jika belum login → tidak tampilkan menu
     if not request.user.is_authenticated:
@@ -49,8 +69,8 @@ def menu_context(request):
 
         menu_data = []
         for menu in menus:
-            submenus = menu.submenus.filter(aktif=True)
-            if not submenus.exists():
+            submenus = _prepare_submenus(menu.submenus.filter(aktif=True))
+            if not submenus:
                 continue
 
             menu_data.append({
@@ -94,6 +114,7 @@ def menu_context(request):
                 'submenus': []
             }
 
+        perm.submenu.resolved_url = _resolve_submenu_url(perm.submenu)
         menu_dict[menu.id]['submenus'].append(perm.submenu)
 
     # Convert ke list

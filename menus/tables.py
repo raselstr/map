@@ -17,7 +17,7 @@ class SubMenuTable(BaseTable):
 
     class Meta(BaseTable.Meta):
         model = SubMenu
-        fields = ("no", "menu", "nama", "url", "url_name", "urutan", "aktif", "aksi")
+        fields = ("no", "menu", "nama", "url_name", "icon", "urutan", "aktif", "aksi")
         order_by = ("menu__urutan", "urutan", "nama")
 
 
