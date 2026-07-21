@@ -26,14 +26,14 @@ def seed_menu_crud(apps, schema_editor):
             "nama": "Sub Menu",
             "url": "/sub-menu/",
             "url_name": "submenu_list",
-            "icon": "ti ti-list-tree",
+            "icon": "ti ti-list",
             "urutan": 20,
         },
         {
             "nama": "Role",
             "url": "/role/",
             "url_name": "role_list",
-            "icon": "ti ti-users-group",
+            "icon": "ti ti-users",
             "urutan": 30,
         },
         {

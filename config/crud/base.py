@@ -234,6 +234,12 @@ class BaseCRUDView(ExcelMixin, ListView):
             filters |= Q(telepon__icontains=search)
         if 'email' in field_names:
             filters |= Q(email__icontains=search)
+        if 'username' in field_names:
+            filters |= Q(username__icontains=search)
+        if 'first_name' in field_names:
+            filters |= Q(first_name__icontains=search)
+        if 'last_name' in field_names:
+            filters |= Q(last_name__icontains=search)
         add_text_filter('pemda', 'pemda__nama_pemda__icontains')
         if 'font_family' in field_names:
             filters |= Q(font_family__icontains=search)

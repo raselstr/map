@@ -110,17 +110,35 @@
     }
   });
 
-  document.body.addEventListener("crudSuccess", function () {
+  document.body.addEventListener("crudSuccess", function (event) {
+    var detail = event.detail || {};
+    if (window.appToast) {
+      window.appToast.show({
+        level: detail.level || "success",
+        title: detail.title || "Berhasil",
+        message: detail.message || "Data berhasil disimpan."
+      });
+    }
+
     var modal = getCrudModal();
     if (modal) {
       modal.hide();
     }
     window.setTimeout(function () {
       window.location.reload();
-    }, 250);
+    }, 900);
   });
 
-  document.body.addEventListener("crudError", function () {
+  document.body.addEventListener("crudError", function (event) {
+    var detail = event.detail || {};
+    if (window.appToast) {
+      window.appToast.show({
+        level: detail.level || "error",
+        title: detail.title || "Validasi gagal",
+        message: detail.message || "Periksa kembali data yang diinput."
+      });
+    }
+
     initSelect2(document.getElementById("crud-modal-body"));
   });
 

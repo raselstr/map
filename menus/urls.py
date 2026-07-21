@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import MenuListView, RoleListView, RolePermissionListView, SubMenuListView
+from .views import MenuListView, RoleListView, RolePermissionListView, SubMenuListView, UserListView
 
 
 urlpatterns = [
@@ -18,6 +18,11 @@ urlpatterns = [
     path("role/add/", RoleListView.as_view(), name="role_add"),
     path("role/<int:pk>/form/", RoleListView.as_view(), name="role_update"),
     path("role/<int:pk>/delete/", RoleListView.as_view(), name="role_delete"),
+
+    path("user/", UserListView.as_view(), name="user_list"),
+    path("user/add/", UserListView.as_view(), name="user_add"),
+    path("user/<int:pk>/form/", UserListView.as_view(), name="user_update"),
+    path("user/<int:pk>/delete/", UserListView.as_view(), name="user_delete"),
 
     path("hak-akses-menu/", RolePermissionListView.as_view(), name="rolepermission_list"),
     path("hak-akses-menu/add/", RolePermissionListView.as_view(), name="rolepermission_add"),

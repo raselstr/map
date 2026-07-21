@@ -1,6 +1,12 @@
+import django_tables2 as tables
+from django.contrib.auth import get_user_model
+
 from config.tables import BaseTable, action_column
 
 from .models import Menu, Role, RolePermission, SubMenu
+
+
+User = get_user_model()
 
 
 class MenuTable(BaseTable):
@@ -37,3 +43,29 @@ class RolePermissionTable(BaseTable):
         model = RolePermission
         fields = ("no", "role", "submenu", "can_view", "can_add", "can_edit", "can_delete", "aksi")
         order_by = ("role__nama", "submenu__menu__urutan", "submenu__urutan")
+
+
+class UserTable(BaseTable):
+    nama_lengkap = tables.Column(
+        accessor="get_full_name",
+        verbose_name="Nama Lengkap",
+        empty_values=(),
+    )
+    aksi = action_column("user_update", "user_delete")
+
+    class Meta(BaseTable.Meta):
+        model = User
+        fields = (
+            "no",
+            "username",
+            "nama_lengkap",
+            "email",
+            "is_active",
+            "is_staff",
+            "is_superuser",
+            "aksi",
+        )
+        order_by = ("username",)
+
+    def render_nama_lengkap(self, record):
+        return record.get_full_name() or "-"

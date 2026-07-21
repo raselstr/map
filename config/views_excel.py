@@ -168,7 +168,7 @@ class ExcelImportView(TemplateView):
                     if result.get('skipped'):
                         message_parts.append(f"{result['skipped']} data dilewati")
 
-                    success_message = "✅ Proses import selesai: " + ', '.join(message_parts)
+                    success_message = "Proses import selesai: " + ', '.join(message_parts)
 
                     messages.success(
                         request,
@@ -179,6 +179,7 @@ class ExcelImportView(TemplateView):
                         'imported': result['imported'],
                         'updated': result['updated'],
                         'skipped': result.get('skipped', 0),
+                        'message': success_message,
                         'redirect': self.get_success_url()
                     })
                 else:

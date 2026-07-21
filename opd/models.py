@@ -2,7 +2,7 @@ from django.db import models
 
 
 class OPD(models.Model):
-    kode = models.CharField(max_length=20, unique=True)
+    kode = models.CharField(max_length=30, unique=True)
     nama = models.CharField(max_length=255)
 
     class Meta:
@@ -15,7 +15,7 @@ class OPD(models.Model):
 
 
 class SubOPD(models.Model):
-    kode = models.CharField(max_length=20, unique=True)
+    kode = models.CharField(max_length=30, unique=True)
     nama = models.CharField(max_length=255)
     opd = models.ForeignKey(OPD, on_delete=models.CASCADE, related_name="sub_opds")
 

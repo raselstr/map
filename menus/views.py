@@ -1,13 +1,17 @@
 from types import SimpleNamespace
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 
 from config.crud.base import BaseCRUDView
 
-from .forms import MenuForm, RoleForm, SubMenuForm
+from .forms import MenuForm, RoleForm, SubMenuForm, UserForm
 from .models import Menu, Role, RolePermission, SubMenu
-from .tables import MenuTable, RoleTable, SubMenuTable
+from .tables import MenuTable, RoleTable, SubMenuTable, UserTable
+
+
+User = get_user_model()
 
 
 class FullAccessCRUDView(BaseCRUDView):
@@ -49,6 +53,42 @@ class RoleListView(FullAccessCRUDView):
     url_list = "/role/"
     url_action = "/role/"
     url_action_pk = "/role/"
+
+
+class UserListView(BaseCRUDView):
+    model = User
+    form_class = UserForm
+    table_class = UserTable
+    title = "User"
+    url_list = "/user/"
+    url_action = "/user/"
+    url_action_pk = "/user/"
+    enable_excel = False
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_superuser:
+            return self._forbidden(request)
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_permission(self):
+        return SimpleNamespace(can_view=True, can_add=True, can_edit=True, can_delete=True)
+
+    def get_base_queryset(self):
+        return self.model.objects.all().order_by("username")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.get_form(self.request)
+        context["search_query"] = self.request.GET.get("search", "")
+        return context
+
+    def delete_view(self, request, pk):
+        if str(request.user.pk) == str(pk):
+            messages.error(request, "User yang sedang login tidak bisa dihapus.")
+            return redirect(self.url_list)
+
+        return super().delete_view(request, pk)
 
 
 class RolePermissionListView(FullAccessCRUDView):
