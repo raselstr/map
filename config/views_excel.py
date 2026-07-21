@@ -32,6 +32,8 @@ class ExcelExportView(View):
     
     def get(self, request, *args, **kwargs):
         """Handle GET request - langsung download Excel dengan semua kolom"""
+        if request.headers.get("HX-Request"):
+            return self.form_view(request)
         return self.download_view(request)
     
     def form_view(self, request):
@@ -45,9 +47,16 @@ class ExcelExportView(View):
                     'selected': True  # Default semua selected
                 })
         
-        return render(request, 'components/excel/export.html', {
+        template_name = (
+            'components/excel/export_modal.html'
+            if request.headers.get("HX-Request")
+            else 'components/excel/export.html'
+        )
+
+        return render(request, template_name, {
             'model_name': self.model._meta.verbose_name_plural,
             'fields': fields,
+            'is_modal': request.headers.get("HX-Request"),
         })
     
     def download_view(self, request):
@@ -100,6 +109,11 @@ class ExcelImportView(TemplateView):
     success_url = None
     columns = None  # Jika None, ambil dari model fields
     match_fields = None
+
+    def get_template_names(self):
+        if self.request.headers.get("HX-Request"):
+            return ['components/excel/import_modal.html']
+        return [self.template_name]
     
     def _get_default_columns(self):
         """Get default columns dari model"""
@@ -119,6 +133,7 @@ class ExcelImportView(TemplateView):
         context['model_name'] = self.model._meta.verbose_name_plural
         context['columns'] = self.columns or self._get_default_columns()
         context['import_url'] = self.request.get_full_path()
+        context['is_modal'] = self.request.headers.get("HX-Request")
         return context
     
     def post(self, request, *args, **kwargs):

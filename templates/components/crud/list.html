@@ -27,30 +27,67 @@
           <div class="col-md-6">
             <div class="crud-actions">
               {% if import_url %}
-                <a class="btn btn-sm btn-light-success" href="{{ import_url }}?next={{ url_list|urlencode }}">
-                  <i class="ti ti-upload"></i>
-                  <span>Import</span>
-                </a>
+                {% if use_excel_modal %}
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-light-success"
+                    data-crud-modal-title="Import {{ title }}"
+                    hx-get="{{ import_url }}?next={{ url_list|urlencode }}"
+                    hx-target="#crud-modal-body"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#crudModal">
+                    <i class="ti ti-upload"></i>
+                    <span>Import</span>
+                  </button>
+                {% else %}
+                  <a class="btn btn-sm btn-light-success" href="{{ import_url }}?next={{ url_list|urlencode }}">
+                    <i class="ti ti-upload"></i>
+                    <span>Import</span>
+                  </a>
+                {% endif %}
               {% endif %}
               {% if export_url %}
-                <a class="btn btn-sm btn-light-success" href="{{ export_url }}">
-                  <i class="ti ti-download"></i>
-                  <span>Export</span>
-                </a>
+                {% if use_excel_modal %}
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-light-success"
+                    data-crud-modal-title="Export {{ title }}"
+                    hx-get="{{ export_url }}"
+                    hx-target="#crud-modal-body"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#crudModal">
+                    <i class="ti ti-download"></i>
+                    <span>Export</span>
+                  </button>
+                {% else %}
+                  <a class="btn btn-sm btn-light-success" href="{{ export_url }}">
+                    <i class="ti ti-download"></i>
+                    <span>Export</span>
+                  </a>
+                {% endif %}
               {% endif %}
               {% if permission.can_add %}
-                <button
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  data-crud-modal-title="Tambah {{ title }}"
-                  hx-get="{{ url_action }}add/"
-                  hx-target="#crud-modal-body"
-                  hx-swap="innerHTML"
-                  data-bs-toggle="modal"
-                  data-bs-target="#crudModal">
-                  <i class="ti ti-plus"></i>
-                  <span>Tambah</span>
-                </button>
+                {% if use_crud_modal %}
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-primary"
+                    data-crud-modal-title="Tambah {{ title }}"
+                    hx-get="{{ url_action }}add/"
+                    hx-target="#crud-modal-body"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#crudModal">
+                    <i class="ti ti-plus"></i>
+                    <span>Tambah</span>
+                  </button>
+                {% else %}
+                  <a class="btn btn-sm btn-primary" href="{{ url_action }}add/">
+                    <i class="ti ti-plus"></i>
+                    <span>Tambah</span>
+                  </a>
+                {% endif %}
               {% endif %}
             </div>
           </div>

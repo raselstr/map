@@ -19,6 +19,9 @@ class BaseCRUDView(ExcelMixin, ListView):
     template_name = "components/crud/list.html"
     template_list = "components/crud/list.html"
     template_form = "components/crud/form_general.html"
+    template_form_page = "components/crud/form_page.html"
+    template_delete = "components/crud/delete.html"
+    template_delete_page = "components/crud/delete_page.html"
 
     title = ""
 
@@ -28,6 +31,8 @@ class BaseCRUDView(ExcelMixin, ListView):
     url_import = None
     url_export = None
     paginate_by = None
+    use_crud_modal = True
+    use_excel_modal = True
 
     # =========================
     # 🔥 PERMISSION
@@ -304,7 +309,10 @@ class BaseCRUDView(ExcelMixin, ListView):
         return {"request": self.request}
 
     def get_table_extra_context(self, queryset):
-        return {"url_list": self.url_list}
+        return {
+            "url_list": self.url_list,
+            "use_crud_modal": self.use_crud_modal,
+        }
 
     def get_table(self, queryset=None):
         table_class = self.get_table_class()
@@ -362,9 +370,21 @@ class BaseCRUDView(ExcelMixin, ListView):
             "url_import": self.url_import,
             "url_export": self.url_export,
             "initial_url": self.url_list,
+            "use_crud_modal": self.use_crud_modal,
+            "use_excel_modal": self.use_excel_modal,
         })
 
         return context
+
+    def get_form_template_name(self, request):
+        if request.headers.get("HX-Request"):
+            return self.template_form
+        return self.template_form_page
+
+    def get_delete_template_name(self, request):
+        if request.headers.get("HX-Request"):
+            return self.template_delete
+        return self.template_delete_page
 
     def get_template_names(self):
         if self.request.headers.get("HX-Request"):
@@ -437,6 +457,8 @@ class BaseCRUDView(ExcelMixin, ListView):
             "form_action": request.path,
             "submit_label": "Simpan Perubahan" if instance else "Simpan Data",
             "is_multipart_form": form.is_multipart(),
+            "use_modal": request.headers.get("HX-Request"),
+            "template_form": self.template_form,
         }
 
         if request.method == "POST" and request.headers.get("HX-Request"):
@@ -446,7 +468,7 @@ class BaseCRUDView(ExcelMixin, ListView):
                 form,
             )
 
-        return render(request, self.template_form, context)
+        return render(request, self.get_form_template_name(request), context)
 
     # =========================
     # DELETE
@@ -471,11 +493,12 @@ class BaseCRUDView(ExcelMixin, ListView):
             self._add_success_message(request, "delete")
             return redirect(self.get_success_redirect_url())
 
-        return render(request, "components/crud/delete.html", {
+        return render(request, self.get_delete_template_name(request), {
             "object": obj,
             "url_list": self.url_list,
             "title": "Hapus Data",
             "delete_action": request.path,
+            "use_modal": request.headers.get("HX-Request"),
         })
 
 class BaseMasterDetailCRUDView(BaseCRUDView):
@@ -569,6 +592,10 @@ class BaseMasterDetailCRUDView(BaseCRUDView):
             "is_multipart_form": (
                 form.is_multipart() or formset.is_multipart()
             ),
+            "form_action": request.path,
+            "submit_label": "Simpan Perubahan" if instance else "Simpan Data",
+            "use_modal": request.headers.get("HX-Request"),
+            "template_form": self.template_form,
         }
 
         if request.method == "POST" and request.headers.get("HX-Request"):
@@ -579,4 +606,4 @@ class BaseMasterDetailCRUDView(BaseCRUDView):
                 formset=formset,
             )
 
-        return render(request, self.template_form, context)
+        return render(request, self.get_form_template_name(request), context)
