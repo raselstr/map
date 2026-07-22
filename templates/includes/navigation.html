@@ -203,11 +203,7 @@
               <span>Social Profile</span>
             </a>
             {% if request.user.is_authenticated %}
-              {% if request.user.is_superuser %}
-                <a href="{% url 'admin:logout' %}" class="dropdown-item">
-              {% else %}
-                <a href="{% url 'logout' %}" class="dropdown-item">
-              {% endif %}
+              <a href="{% url 'logout' %}" class="dropdown-item">
               <i class="ti ti-logout"></i>
               <span>Logout</span>
             </a>

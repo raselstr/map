@@ -47,7 +47,7 @@ class OPDCRUDTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "hx-post")
-        self.assertContains(response, "data-confirm=\"save\"")
+        self.assertNotContains(response, "data-confirm=\"save\"")
 
     def test_delete_opd(self):
         opd = OPD.objects.create(kode="1.01", nama="Dinas Pendidikan")

@@ -1,6 +1,4 @@
 (function () {
-  var pendingForm = null;
-  var confirmModal = null;
   var crudModal = null;
 
   function getCrudModal() {
@@ -10,15 +8,6 @@
     }
     crudModal = crudModal || bootstrap.Modal.getOrCreateInstance(modalEl);
     return crudModal;
-  }
-
-  function getConfirmModal() {
-    var modalEl = document.getElementById("crudSaveConfirmModal");
-    if (!modalEl || !window.bootstrap) {
-      return null;
-    }
-    confirmModal = confirmModal || bootstrap.Modal.getOrCreateInstance(modalEl);
-    return confirmModal;
   }
 
   function initSelect2(scope) {
@@ -62,52 +51,6 @@
 
   document.addEventListener("htmx:afterSwap", function (event) {
     initSelect2(event.target);
-  });
-
-  document.addEventListener("submit", function (event) {
-    var form = event.target;
-    if (!form.matches('form[data-confirm="save"]') || form.dataset.confirmed === "true") {
-      return;
-    }
-
-    event.preventDefault();
-    pendingForm = form;
-
-    var modal = getConfirmModal();
-    if (modal) {
-      modal.show();
-      return;
-    }
-
-    form.dataset.confirmed = "true";
-    if (window.htmx && form.hasAttribute("hx-post")) {
-      htmx.trigger(form, "submit");
-    } else {
-      form.submit();
-    }
-  }, true);
-
-  document.addEventListener("click", function (event) {
-    var confirmButton = event.target.closest("#crudConfirmSaveButton");
-    if (!confirmButton) {
-      return;
-    }
-
-    if (!pendingForm) {
-      return;
-    }
-
-    pendingForm.dataset.confirmed = "true";
-    var modal = getConfirmModal();
-    if (modal) {
-      modal.hide();
-    }
-
-    if (pendingForm.requestSubmit) {
-      pendingForm.requestSubmit();
-    } else {
-      pendingForm.submit();
-    }
   });
 
   document.body.addEventListener("crudSuccess", function (event) {

@@ -46,7 +46,7 @@
               </ul>
             </li>
           {% endfor %}
-        {% else %}
+        {% elif not request.user.is_authenticated %}
           <li class="pc-item pc-caption">
             <label>Data Master</label>
             <i class="ti ti-database"></i>
@@ -106,7 +106,7 @@
                   </a>
                 </li>
                 <li class="pc-item">
-                  <a class="pc-link" href="{% url 'admin:logout' %}">
+                  <a class="pc-link" href="{% url 'logout' %}">
                     <span class="pc-submenu-icon"><i class="ti ti-logout"></i></span>
                     <span class="pc-mtext">Logout</span>
                   </a>
