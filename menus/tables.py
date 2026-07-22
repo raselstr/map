@@ -51,6 +51,11 @@ class UserTable(BaseTable):
         verbose_name="Nama Lengkap",
         empty_values=(),
     )
+    role = tables.Column(
+        empty_values=(),
+        verbose_name="Role",
+        orderable=False,
+    )
     aksi = action_column("user_update", "user_delete")
 
     class Meta(BaseTable.Meta):
@@ -60,6 +65,7 @@ class UserTable(BaseTable):
             "username",
             "nama_lengkap",
             "email",
+            "role",
             "is_active",
             "is_staff",
             "is_superuser",
@@ -69,3 +75,8 @@ class UserTable(BaseTable):
 
     def render_nama_lengkap(self, record):
         return record.get_full_name() or "-"
+
+    def render_role(self, record):
+        profile = getattr(record, "userprofile", None)
+        role = getattr(profile, "role", None)
+        return role.nama if role else "-"

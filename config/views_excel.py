@@ -7,9 +7,37 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db import models
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
 from config.utils.excel_handler import ExcelExporter, ExcelImporter
+
+
+def apply_active_year_filter(queryset, request):
+    current_year = timezone.localdate().year
+    year = request.session.get("active_year", current_year)
+
+    try:
+        year = int(year)
+    except (TypeError, ValueError):
+        year = current_year
+
+    concrete_fields = [
+        field
+        for field in queryset.model._meta.get_fields()
+        if getattr(field, "concrete", False)
+    ]
+
+    for field in concrete_fields:
+        if field.name == "tahun":
+            return queryset.filter(tahun=year)
+
+    for field in concrete_fields:
+        if isinstance(field, (models.DateField, models.DateTimeField)):
+            return queryset.filter(**{f"{field.name}__year": year})
+
+    return queryset
 
 
 class ExcelExportView(View):
@@ -28,7 +56,7 @@ class ExcelExportView(View):
     
     def get_queryset(self):
         """Override untuk custom filtering"""
-        return self.model.objects.all()
+        return apply_active_year_filter(self.model.objects.all(), self.request)
     
     def get(self, request, *args, **kwargs):
         """Handle GET request - langsung download Excel dengan semua kolom"""

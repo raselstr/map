@@ -42,6 +42,14 @@
               </div>
               <span class="text-danger">{{ field.errors }}</span>
               {% endfor %}
+              <div class="form-floating mb-3">
+                <select class="form-select" id="active_year" name="active_year">
+                  {% for year in year_options %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                  {% endfor %}
+                </select>
+                <label for="active_year">Tahun Aktif</label>
+              </div>
               <div class="d-flex mt-1 justify-content-between">
                 <div class="form-check">
                   <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" />

@@ -1,4 +1,5 @@
 from django.urls import NoReverseMatch, reverse
+from django.utils import timezone
 
 from menus.models import RolePermission, Menu
 
@@ -54,10 +55,59 @@ def _prepare_submenus(submenus):
         prepared.append(submenu)
     return prepared
 
+
+def _get_user_profile(user):
+    try:
+        return user.userprofile
+    except Exception:
+        return None
+
+
+def _get_user_role(user):
+    if not getattr(user, "is_authenticated", False):
+        return None
+
+    if user.is_superuser:
+        return "Superuser"
+
+    profile = _get_user_profile(user)
+    role = getattr(profile, "role", None)
+    return role.nama if role else "Belum memiliki role"
+
+
+def _get_active_year(request):
+    current_year = timezone.localdate().year
+    year = request.session.get("active_year", current_year)
+
+    try:
+        return int(year)
+    except (TypeError, ValueError):
+        return current_year
+
+
+def user_navigation_context(request):
+    current_year = timezone.localdate().year
+
+    context = {
+        "active_year": _get_active_year(request),
+        "year_options": list(range(current_year - 5, current_year + 6)),
+    }
+
+    if request.user.is_authenticated:
+        full_name = request.user.get_full_name().strip()
+        context.update({
+            "active_user_name": full_name or request.user.get_username(),
+            "active_user_role": _get_user_role(request.user),
+        })
+
+    return context
+
 def menu_context(request):
+    context = user_navigation_context(request)
+
     # Jika belum login → tidak tampilkan menu
     if not request.user.is_authenticated:
-        return {}
+        return context
 
     user = request.user
 
@@ -78,10 +128,11 @@ def menu_context(request):
                 'submenus': submenus
             })
 
-        return {
+        context.update({
             'menu_data': menu_data,
             'active_submenu': _active_submenu_name(request),
-        }
+        })
+        return context
 
     # ==============================
     # USER BIASA (BERDASARKAN ROLE)
@@ -89,7 +140,10 @@ def menu_context(request):
     try:
         role = user.userprofile.role
     except Exception:
-        return {}
+        return context
+
+    if not role:
+        return context
 
     # Ambil permission sesuai role
     permissions = RolePermission.objects.filter(
@@ -120,7 +174,8 @@ def menu_context(request):
     # Convert ke list
     menu_data = list(menu_dict.values())
 
-    return {
+    context.update({
         'menu_data': menu_data,
         'active_submenu': _active_submenu_name(request),
-    }
+    })
+    return context

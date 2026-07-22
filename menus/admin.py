@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Menu, Role, RolePermission, SubMenu
+from .models import Menu, Role, RolePermission, SubMenu, UserProfile
 
 
 class SubMenuInline(admin.TabularInline):
@@ -36,3 +36,10 @@ class RolePermissionAdmin(admin.ModelAdmin):
     list_filter = ("role", "submenu__menu", "can_view")
     list_editable = ("can_view", "can_add", "can_edit", "can_delete")
     search_fields = ("role__nama", "submenu__nama")
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "role")
+    list_filter = ("role",)
+    search_fields = ("user__username", "user__first_name", "user__last_name", "role__nama")

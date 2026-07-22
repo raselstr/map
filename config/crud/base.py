@@ -6,6 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import ListView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.utils import timezone
 from django_tables2 import RequestConfig
 from types import SimpleNamespace
 from config.views_excel import ExcelMixin
@@ -33,6 +34,7 @@ class BaseCRUDView(ExcelMixin, ListView):
     paginate_by = None
     use_crud_modal = True
     use_excel_modal = True
+    enable_year_filter = True
 
     # =========================
     # 🔥 PERMISSION
@@ -186,6 +188,7 @@ class BaseCRUDView(ExcelMixin, ListView):
 
     def get_queryset(self):
         qs = self.get_base_queryset()
+        qs = self.apply_active_year_filter(qs)
         search = self.request.GET.get("search")
 
         if not search:
@@ -297,6 +300,47 @@ class BaseCRUDView(ExcelMixin, ListView):
 
         return qs
 
+    def get_active_year(self):
+        year = self.request.session.get("active_year") or timezone.localdate().year
+
+        try:
+            return int(year)
+        except (TypeError, ValueError):
+            return timezone.localdate().year
+
+    def get_year_filter_field(self):
+        if not self.enable_year_filter:
+            return None
+
+        concrete_fields = [
+            field
+            for field in self.model._meta.get_fields()
+            if getattr(field, "concrete", False)
+        ]
+
+        for field in concrete_fields:
+            if field.name == "tahun":
+                return field
+
+        for field in concrete_fields:
+            if isinstance(field, (models.DateField, models.DateTimeField)):
+                return field
+
+        return None
+
+    def apply_active_year_filter(self, qs):
+        field = self.get_year_filter_field()
+
+        if field is None:
+            return qs
+
+        active_year = self.get_active_year()
+
+        if field.name == "tahun":
+            return qs.filter(tahun=active_year)
+
+        return qs.filter(**{f"{field.name}__year": active_year})
+
     def get_table_class(self):
         return self.table_class
 
@@ -372,6 +416,8 @@ class BaseCRUDView(ExcelMixin, ListView):
             "initial_url": self.url_list,
             "use_crud_modal": self.use_crud_modal,
             "use_excel_modal": self.use_excel_modal,
+            "active_year": self.get_active_year(),
+            "has_year_filter": self.get_year_filter_field() is not None,
         })
 
         return context

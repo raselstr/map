@@ -75,7 +75,7 @@ class UserListView(BaseCRUDView):
         return SimpleNamespace(can_view=True, can_add=True, can_edit=True, can_delete=True)
 
     def get_base_queryset(self):
-        return self.model.objects.all().order_by("username")
+        return self.model.objects.select_related("userprofile__role").all().order_by("username")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
