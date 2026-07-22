@@ -3,26 +3,12 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
-from django.utils import timezone
 
 from admin_berry.forms import LoginForm
 
 from menus.forms import UserSelfProfileForm
 from menus.models import UserProfile
-
-
-def get_year_options():
-    current_year = timezone.localdate().year
-    return list(range(current_year - 5, current_year + 6))
-
-
-def normalize_year(value):
-    current_year = timezone.localdate().year
-
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return current_year
+from config.year_options import get_year_options, normalize_year
 
 
 class ActiveYearLoginView(LoginView):
@@ -32,11 +18,12 @@ class ActiveYearLoginView(LoginView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["year_options"] = get_year_options()
-        context["selected_year"] = normalize_year(
+        selected_year = normalize_year(
             self.request.POST.get("active_year")
             or self.request.session.get("active_year")
         )
+        context["year_options"] = get_year_options(extra_year=selected_year)
+        context["selected_year"] = selected_year
         return context
 
     def form_valid(self, form):

@@ -63,50 +63,51 @@
   background: #cff4fc;
 }
 
-.active-user-summary {
+.pc-header .active-user-summary {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  height: 3.75rem;
+  height: 2.3rem;
   padding: 0 1rem;
   min-width: 0;
   max-width: 420px;
   border-radius: 0.75rem;
-  background: #ede7f6;
-  color: #673ab7;
+  background: #ede7f6 !important;
+  color: #673ab7 !important;
   line-height: 1;
 }
 
-.active-user-name {
+.pc-header .active-user-name {
   overflow: hidden;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.active-user-divider {
+.pc-header .active-user-divider {
   width: 1px;
   height: 1.35rem;
   flex: 0 0 1px;
   background: rgba(103, 58, 183, 0.32);
 }
 
-.active-user-role {
+.pc-header .active-user-role {
   overflow: hidden;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.active-year-link {
-  width: auto;
-  min-width: 5.35rem;
-  padding-right: 0.85rem;
-  padding-left: 0.85rem;
+.pc-header .active-year-link {
+  width: 6rem !important;
+  min-width: 6rem !important;
+  padding-right: 0.75rem !important;
+  padding-left: 0.75rem !important;
   gap: 0.35rem;
+  white-space: nowrap;
 }
 
-.active-year-link span {
+.pc-header .active-year-link span {
   display: inline-block;
   min-width: 2.45rem;
   font-weight: 700;
@@ -149,21 +150,22 @@
     width: auto;
   }
 
-  .active-user-summary {
+  .pc-header .active-user-summary {
     max-width: 210px;
-    height: 3rem;
+    height: 2.3rem;
     padding: 0 0.75rem;
     gap: 0.45rem;
     font-size: 0.82rem;
   }
 
-  .active-user-divider {
+  .pc-header .active-user-divider {
     height: 1rem;
   }
 
-  .active-year-link {
-    min-width: 4.75rem;
-    padding-right: 0.6rem;
-    padding-left: 0.6rem;
+  .pc-header .active-year-link {
+    width: 5.5rem !important;
+    min-width: 5.5rem !important;
+    padding-right: 0.5rem !important;
+    padding-left: 0.5rem !important;
   }
 }

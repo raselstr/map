@@ -1,6 +1,7 @@
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 
+from config.year_options import get_year_options
 from menus.models import RolePermission, Menu
 
 
@@ -86,11 +87,11 @@ def _get_active_year(request):
 
 
 def user_navigation_context(request):
-    current_year = timezone.localdate().year
+    active_year = _get_active_year(request)
 
     context = {
-        "active_year": _get_active_year(request),
-        "year_options": list(range(current_year - 5, current_year + 6)),
+        "active_year": active_year,
+        "year_options": get_year_options(extra_year=active_year),
     }
 
     if request.user.is_authenticated:
