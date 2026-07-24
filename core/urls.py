@@ -28,4 +28,5 @@ urlpatterns = [
     path("", include('config.urls')),
     path("", include('menus.urls')),
     path("", include('opd.urls')),
+    path("", include('pegawai.urls')),
 ]
