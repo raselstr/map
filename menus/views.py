@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 
-from config.crud.base import BaseCRUDView
+from config.crud.base import FullAccessCRUDView, BaseCRUDView
 
 from .forms import MenuForm, RoleForm, SubMenuForm, UserForm
 from .models import Menu, Role, RolePermission, SubMenu
@@ -12,18 +12,6 @@ from .tables import MenuTable, RoleTable, SubMenuTable, UserTable
 
 
 User = get_user_model()
-
-
-class FullAccessCRUDView(BaseCRUDView):
-    def get_permission(self):
-        return SimpleNamespace(can_view=True, can_add=True, can_edit=True, can_delete=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = self.get_form(self.request)
-        context["search_query"] = self.request.GET.get("search", "")
-        return context
-
 
 class MenuListView(FullAccessCRUDView):
     model = Menu
