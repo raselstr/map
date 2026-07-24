@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "config",
     "menus",
     "opd",
+    "pegawai",
 ]
 
 MIDDLEWARE = [

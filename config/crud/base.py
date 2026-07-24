@@ -653,3 +653,13 @@ class BaseMasterDetailCRUDView(BaseCRUDView):
             )
 
         return render(request, self.get_form_template_name(request), context)
+
+class FullAccessCRUDView(BaseCRUDView):
+    def get_permission(self):
+        return SimpleNamespace(can_view=True, can_add=True, can_edit=True, can_delete=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.get_form(self.request)
+        context["search_query"] = self.request.GET.get("search", "")
+        return context
