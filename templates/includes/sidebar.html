@@ -46,33 +46,7 @@
               </ul>
             </li>
           {% endfor %}
-        {% elif not request.user.is_authenticated %}
-          <li class="pc-item pc-caption">
-            <label>Data Master</label>
-            <i class="ti ti-database"></i>
-          </li>
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-database"></i></span>
-              <span class="pc-mtext">Data Master</span>
-              <span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item">
-                <a class="pc-link" href="/opd/">
-                  <span class="pc-submenu-icon"><i class="ti ti-building"></i></span>
-                  <span class="pc-mtext">OPD</span>
-                </a>
-              </li>
-              <li class="pc-item">
-                <a class="pc-link" href="/sub-opd/">
-                  <span class="pc-submenu-icon"><i class="ti ti-building-community"></i></span>
-                  <span class="pc-mtext">Sub OPD</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-        {% endif %}
+        {% endif %} 
 
         <li class="pc-item pc-caption">
           <label>Akun</label>
